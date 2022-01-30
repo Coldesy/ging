@@ -8,7 +8,7 @@ const { StringDecoder } = require('string_decoder');
 main().catch(err => console.log(err));
 
 async function main() {
-	await mongoose.connect('mongodb://localhost:27017/registerdata', { useNewUrlParser: true, useUnifiedTopology: true });
+	await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 }
 const registerSchema = new mongoose.Schema({
 	userId: {

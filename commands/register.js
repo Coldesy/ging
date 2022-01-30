@@ -51,7 +51,7 @@ module.exports = {
 
 		await wait(3000)
 		await interaction.user.send({ embeds: [Embed1] })} catch(err){ 
-			interaction.Reply(`It looks like you have already registered\ndon't worry,We will start the game soon...`)
+			interaction.reply(`It looks like you have already registered\ndon't worry,We will start the game soon...`)
 			console.log(err)
 		}
 	}

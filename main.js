@@ -2,14 +2,29 @@ const fs = require('fs');
 const { Client, Collection, Intents,MessageEmbed } = require('discord.js');
 const { token } = require('./config.json');
 const { fileURLToPath } = require('url');
-const Embed1 = new MessageEmbed()
-	.setColor('#00aa00')
-	.setTitle('pick')
-	.setDescription('ghfhqwfqfggq')
-	.setThumbnail('https://i.imgur.com/AfFpg78u.png')
-	.setImage('https://i.imgur.com/Afr75uiu.png')
-	.setTimestamp()
-	.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFj7pu.png' });
+const mongoose = require('mongoose');
+const { stringify } = require('querystring');
+const { StringDecoder } = require('string_decoder');
+const { builtinModules } = require('module');
+
+main().catch(err => console.log(err));
+
+async function main() {
+	await mongoose.connect('mongodb+srv://coldy:lakshmish..@hxhbot.ecke1.mongodb.net/registerdata', { useNewUrlParser: true, useUnifiedTopology: true,useFindAndModify: false });
+}
+const registerSchema = new mongoose.Schema({
+	userId: {
+		type: String,
+		unique: true
+	},
+	nik: String
+
+}
+
+
+)
+const registerData = mongoose.model('userid', registerSchema) 
+module.exports.registerData = registerData
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 

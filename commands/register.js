@@ -4,24 +4,8 @@ const wait = require('util').promisify(setTimeout)
 const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
+const {registerData} = require('../main.js')
 
-main().catch(err => console.log(err));
-
-async function main() {
-	await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-}
-const registerSchema = new mongoose.Schema({
-	userId: {
-		type: String,
-		unique: true
-	},
-	nik: String
-
-}
-
-
-)
-const registerData = mongoose.model('userid', registerSchema) 
 
 
 
@@ -48,11 +32,11 @@ module.exports = {
 		const nick = interaction.options.getString('nickname')
 		var savedata = new registerData({ userId: interaction.user.id, nik: nick })
 		await savedata.save()
-
-		await wait(3000)
 		await interaction.user.send({ embeds: [Embed1] })} catch(err){ 
-			interaction.reply(`It looks like you have already registered\ndon't worry,We will start the game soon...`)
-			console.log(err)
+			if (err.code == 11000){
+				await interaction.reply(`It looks like you have already registered\ndon't worry,We will start the game soon...`)
+			}
+			
 		}
 	}
 

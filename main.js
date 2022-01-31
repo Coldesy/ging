@@ -10,7 +10,7 @@ const { builtinModules } = require('module');
 main().catch(err => console.log(err));
 
 async function main() {
-	await mongoose.connect('mongodb+srv://coldy:lakshmish..@hxhbot.ecke1.mongodb.net/registerdata', { useNewUrlParser: true, useUnifiedTopology: true,useFindAndModify: false });
+	await mongoose.connect('mongodb+srv://coldy:lakshmish..@hxhbot.ecke1.mongodb.net/registerdata', { useNewUrlParser: true, useUnifiedTopology: true });
 }
 const registerSchema = new mongoose.Schema({
 	userId: {

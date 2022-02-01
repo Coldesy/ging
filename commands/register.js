@@ -18,6 +18,12 @@ const Embed1 = new MessageEmbed()
 	.setFooter({ text: 'Adventure will begin soon!' });
 
 module.exports = {
+	data: {
+		name:'register'
+	}
+}
+
+module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('register')
 		.setDescription('Registers player into the new world!')
@@ -27,10 +33,36 @@ module.exports = {
 
 
 	try {
-		
+		function statsRoll(){
+			health = Math.floor(Math.random() * 20)
+		    attack = Math.floor(Math.random() * 20)	
+		    defense = Math.floor(Math.random() * 20)
+		    nen = Math.floor(Math.random() * 20)
+		    intelligence = Math.floor(Math.random() * 20)
+			console.log(nen)
 
+			while(health + attack + defense + nen + intelligence < 70){
+		    health = Math.floor(Math.random() * 20)
+		    attack = Math.floor(Math.random() * 20)	
+		    defense = Math.floor(Math.random() * 20)
+		    nen = Math.floor(Math.random() * 20)
+		    intelligence = Math.floor(Math.random() * 20)
+			console.log(nen)
+			if (health + attack + defense + nen + intelligence < 70) {
+				statsRoll() }
+			else if (health + attack + defense + nen + intelligence > 70){
+				return [health,attack,defense,nen,intelligence]
+				break
+				
+			}
+		
+			}
+		  
+			}
+		statsRoll()
+       
 		const nick = interaction.options.getString('nickname')
-		var savedata = new registerData({ userId: interaction.user.id, nik: nick })
+		var savedata = new registerData({ userId: interaction.user.id, nik: nick,health: health,attack: attack,defense: defense,nen: nen,intelligence: intelligence})
 		await savedata.save()
 		await interaction.user.send({ embeds: [Embed1] })} catch(err){ 
 			if (err.code == 11000){

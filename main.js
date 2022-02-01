@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
 const { builtinModules } = require('module');
+const { hyperlink } = require('@discordjs/builders');
 
 main().catch(err => console.log(err));
 
@@ -13,17 +14,23 @@ async function main() {
 	await mongoose.connect('mongodb+srv://coldy:ekilrrPL1DyLow8j@hxhbot.ecke1.mongodb.net/registerdata', { useNewUrlParser: true, useUnifiedTopology: true });
 }
 const registerSchema = new mongoose.Schema({
-	userId: {
+	userid: {
 		type: String,
 		unique: true
 	},
-	nik: String
+	nik: String,
+	health: Number,
+	attack: Number,
+	defense: Number,
+	nen: Number,
+	intelligence: Number
 
 }
-
-
 )
-const registerData = mongoose.model('userid', registerSchema) 
+
+
+
+const registerData = mongoose.model('playerData', registerSchema) 
 module.exports.registerData = registerData
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -32,10 +39,14 @@ client.commands = new Collection();
 const commandFiles = fs.readdirSync(`./commands`).filter(filter => filter.endsWith('.js'))
 for ( file of commandFiles) {
     const command = require(`./commands/${file}`)
-    client.commands.set(command.data.name, command)
+    client.commands.set(['register','stats'], command)
 }
 
+
 client.on('interactionCreate', async interaction => {
+	url = 'https://discord.gg/BRrcUMy45M'
+	link = hyperlink('Join this awesome server!', url)
+	client.user.setPresence({activities: [{name}]})
 	if (!interaction.isCommand()) return;
 	const command = client.commands.get(interaction.commandName)
 

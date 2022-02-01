@@ -17,11 +17,7 @@ const Embed1 = new MessageEmbed()
 	.setImage('https://media.discordapp.net/attachments/936965500754350173/937237719506092062/latesfgt.jpg?width=812&height=613')
 	.setFooter({ text: 'Adventure will begin soon!' });
 
-module.exports = {
-	data: {
-		name:'register'
-	}
-}
+
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -49,7 +45,7 @@ module.exports = {
 			
 			if (health + attack + defense + nen + intelligence > 70){
 				return [health,attack,defense,nen,intelligence]
-				break
+		
 				
 			}
 		
@@ -58,10 +54,16 @@ module.exports = {
 			}
 		statsRoll()
         let redu = statsRoll()
-		let {health,attack,defense,nen,intelligence} = redu		
+
+		let health = redu[0]
+		let attack = redu[1]
+		let defense = redu[2]
+		let nen = redu[3]
+		let intelligence = redu[4]
+		console.log(redu)	
        
 		const nick = interaction.options.getString('nickname')
-		var savedata = new registerData({ userId: interaction.user.id, nik: nick,health: health,attack: attack,defense: defense,nen: nen,intelligence: intelligence})
+		var savedata = new registerData({ userid: interaction.user.id, nik: nick,health: health,attack: attack,defense: defense,nen: nen,intelligence: intelligence})
 		await savedata.save()
 		await interaction.user.send({ embeds: [Embed1] })} catch(err){ 
 			if (err.code == 11000){

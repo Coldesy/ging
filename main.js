@@ -34,12 +34,16 @@ const registerData = mongoose.model('playerData', registerSchema)
 module.exports.registerData = registerData
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-
+i = 0
 client.commands = new Collection();
-const commandFiles = fs.readdirSync(`./commands`).filter(filter => filter.endsWith('.js'))
-for ( file of commandFiles) {
+const commandFiles = fs.readdirSync(`commands`).filter(filter => filter.endsWith('.js'))
+for ( const file of commandFiles) {
     const command = require(`./commands/${file}`)
-    client.commands.set(['register','stats'], command)
+	
+	let nigg = ['register','stats']
+	let pucci = nigg[i]
+    client.commands.set(pucci, command)
+	i++
 }
 
 

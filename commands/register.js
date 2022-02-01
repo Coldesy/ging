@@ -39,18 +39,15 @@ module.exports = {
 		    var defense = Math.floor(Math.random() * 20)
 		    var nen = Math.floor(Math.random() * 20)
 		    var intelligence = Math.floor(Math.random() * 20)
-			console.log(nen)
-
+	
 			while(health + attack + defense + nen + intelligence < 70){
 		    health = Math.floor(Math.random() * 20)
 		    attack = Math.floor(Math.random() * 20)	
 		    defense = Math.floor(Math.random() * 20)
 		    nen = Math.floor(Math.random() * 20)
 		    intelligence = Math.floor(Math.random() * 20)
-			console.log(nen)
-			if (health + attack + defense + nen + intelligence < 70) {
-				statsRoll() }
-			else if (health + attack + defense + nen + intelligence > 70){
+			
+			if (health + attack + defense + nen + intelligence > 70){
 				return [health,attack,defense,nen,intelligence]
 				break
 				
@@ -61,7 +58,8 @@ module.exports = {
 			}
 		statsRoll()
         let redu = statsRoll()
-		let {health,attack,defense,nen,intelligence} = redu
+		let {health,attack,defense,nen,intelligence} = redu		
+       
 		const nick = interaction.options.getString('nickname')
 		var savedata = new registerData({ userId: interaction.user.id, nik: nick,health: health,attack: attack,defense: defense,nen: nen,intelligence: intelligence})
 		await savedata.save()

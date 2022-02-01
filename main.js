@@ -46,7 +46,7 @@ for ( file of commandFiles) {
 client.on('interactionCreate', async interaction => {
 	url = 'https://discord.gg/BRrcUMy45M'
 	link = hyperlink('Join this awesome server!', url)
-	client.user.setPresence({activities: [{name}]})
+	client.user.setPresence({activities: [{name: `${link}`}]})
 	if (!interaction.isCommand()) return;
 	const command = client.commands.get(interaction.commandName)
 

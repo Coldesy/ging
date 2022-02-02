@@ -19,7 +19,7 @@ module.exports = {
 		
    
 	async execute(interaction) {
-        let neuron = await registerData.find({'userid': interaction.user.id},'-_id nik health attack defense nen intelligence', function(err,docs){
+        try {let neuron = await registerData.find({'userid': interaction.user.id},'-_id nik health attack defense nen intelligence', function(err,docs){
             
             let doc = docs[0].toObject()
             let a = doc.nik
@@ -64,7 +64,9 @@ module.exports = {
             { name: `Total stats: ${b+c+d+e+f}`, value:'\u200B'}
   
         )
-        await interaction.reply({embeds: [embed2]})
+        await interaction.reply({embeds: [embed2]})} catch (err){
+            await interaction.reply('Please register first!')
+        }
         
     }
     }

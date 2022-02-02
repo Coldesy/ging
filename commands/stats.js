@@ -67,7 +67,7 @@ module.exports = {
                 )
             if (a === undefined) {
                 return
-            } else { await interaction.reply({ embeds: [embed2] }) }
+            } else { await interaction.reply({ embeds: [embed2[0]] }) }
         } catch (err) {
             await interaction.reply('Please register first!')
         }

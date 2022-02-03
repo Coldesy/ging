@@ -1,4 +1,5 @@
-const { SlashCommandBuilder } = require('@discordjs/builders')
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { channel } = require('diagnostics_channel');
 const { MessageEmbed } = require('discord.js')
 const wait = require('util').promisify(setTimeout)
 const mongoose = require('mongoose');
@@ -21,19 +22,27 @@ module.exports = {
     async execute(interaction) {
         try {
             let neuron = await registerData.find({ 'userid': interaction.user.id }, '-_id nik health attack defense nen intelligence', function (err, docs) {
-                if (docs[0] !== undefined) {
-                    let doc = docs[0].toObject()
-
-                    let a = doc.nik
-                    let b = doc.health
-                    let c = doc.attack
-                    let d = doc.defense
-                    let e = doc.nen
-                    let f = doc.intelligence
-
-
-                    return [a, b, c, d, e, f]
+                    
+                if (docs[0] === undefined){
+                    return
+                    
                 }
+             else if (docs[0] !== undefined){
+                let doc = docs[0].toObject()
+
+                let a = doc.nik
+                let b = doc.health
+                let c = doc.attack
+                let d = doc.defense
+                let e = doc.nen
+                let f = doc.intelligence
+
+
+                return [a, b, c, d, e, f]}
+                if (err){
+                    console.log(err)
+                }
+                
 
 
 
@@ -42,9 +51,7 @@ module.exports = {
 
 
 
-            }).clone().exec().catch((err) => {
-                console.log(err)
-            })
+            }).clone()
 
 
 
@@ -54,15 +61,13 @@ module.exports = {
 
             let a = neuron[0]
 
-            if (a !== undefined) {
+            
                 let c = a['health']
                 let d = a['attack']
                 let e = a['defense']
                 let f = a['nen']
                 let g = a['intelligence']
-            } else if (a === undefined){
-                throw new Error('err')
-            }
+
 
 
 
@@ -82,11 +87,13 @@ module.exports = {
                     { name: `Total stats: ${c + d + e + f + g}`, value: '\u200B' }
 
                 )
-            if (a !== undefined) { await interaction.reply({ embeds: [embed2] }) }
+            await interaction.reply({ embeds: [embed2] }) 
         }
         catch (err) {
-            console.log(err)
-            await interaction.reply('Please register first!')
+            if (err){
+            await interaction.reply('Please register yourself!')
+            console.log(err)}
+            
         }
 
     }

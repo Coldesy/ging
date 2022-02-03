@@ -21,32 +21,49 @@ module.exports = {
     async execute(interaction) {
         try {
             let neuron = await registerData.find({ 'userid': interaction.user.id }, '-_id nik health attack defense nen intelligence', function (err, docs) {
+                if (docs[0] !== undefined) {
+                    let doc = docs[0].toObject()
 
-                let doc = docs[0].toObject()
-                let a = doc.nik
-                let b = doc.health
-                let c = doc.attack
-                let d = doc.defense
-                let e = doc.nen
-                let f = doc.intelligence
-                return [a, b, c, d, e, f]
-
-
+                    let a = doc.nik
+                    let b = doc.health
+                    let c = doc.attack
+                    let d = doc.defense
+                    let e = doc.nen
+                    let f = doc.intelligence
 
 
+                    return [a, b, c, d, e, f]
+                }
 
 
-            }).clone()
+
+
+
+
+
+
+            }).clone().exec().catch((err) => {
+                console.log(err)
+            })
+
+
+
 
 
 
 
             let a = neuron[0]
-            let b = neuron[1]
-            let c = neuron[2]
-            let d = neuron[3]
-            let e = neuron[4]
-            let f = neuron[5]
+
+            if (a !== undefined) {
+                let c = a['health']
+                let d = a['attack']
+                let e = a['defense']
+                let f = a['nen']
+                let g = a['intelligence']
+            } else if (a === undefined){
+                throw new Error('err')
+            }
+
 
 
 
@@ -54,21 +71,21 @@ module.exports = {
 
             const embed2 = new MessageEmbed()
                 .setColor('#b3c29f')
-                .setTitle(`Heya ${a},Here your battle stats!`)
+                .setTitle(`Heya Player,Here your battle stats!`)
                 .addFields(
                     { name: '\u200B', value: '\u200B' },
-                    { name: `Health: ${b}`, value: '\u200B' },
-                    { name: `Attack: ${c}`, value: '\u200B' },
-                    { name: `Defense: ${d}`, value: '\u200B' },
-                    { name: `Nen Aura: ${e}`, value: '\u200B' },
-                    { name: `Intelligence: ${f}`, value: '\u200B' },
-                    { name: `Total stats: ${b + c + d + e + f}`, value: '\u200B' }
+                    { name: `Health: ${c}`, value: '\u200B' },
+                    { name: `Attack: ${d}`, value: '\u200B' },
+                    { name: `Defense: ${e}`, value: '\u200B' },
+                    { name: `Nen Aura: ${f}`, value: '\u200B' },
+                    { name: `Intelligence: ${g}`, value: '\u200B' },
+                    { name: `Total stats: ${c + d + e + f + g}`, value: '\u200B' }
 
                 )
-            if (a === undefined) {
-                return
-            } else { await interaction.reply({ embeds: [embed2[0]] }) }
-        } catch (err) {
+            if (a !== undefined) { await interaction.reply({ embeds: [embed2] }) }
+        }
+        catch (err) {
+            console.log(err)
             await interaction.reply('Please register first!')
         }
 

@@ -9,7 +9,7 @@
   "author": "coldy",
   "license": "ISC",
   "engines": {
-    "node": ">=16.6.0"
+    "node": ">=16.6.0 <17.5.0"
   },
   "dependencies": {
     "@discordjs/builders": "^0.12.0",

@@ -1,22 +1,21 @@
 const fs = require('fs');
 const { Client, Collection, Intents,MessageEmbed } = require('discord.js');
-const { token } = require('./config.json');
-const { fileURLToPath } = require('url');
 const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
 const { builtinModules } = require('module');
 const { hyperlink } = require('@discordjs/builders');
+require('dotenv').config()
 
 main().catch(err => console.log(err));
 
 async function main() {
-	await mongoose.connect('mongodb+srv://coldy:ekilrrPL1DyLow8j@hxhbot.ecke1.mongodb.net/registerdata', { useNewUrlParser: true, useUnifiedTopology: true });
+	await mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true, useUnifiedTopology: true,autoIndex:true });
 }
 const registerSchema = new mongoose.Schema({
 	userid: {
 		type: String,
-		unique: true
+		unique: true,
 	},
 	nik: String,
 	health: Number,
@@ -33,6 +32,36 @@ const registerSchema = new mongoose.Schema({
 const registerData = mongoose.model('playerData', registerSchema) 
 module.exports.registerData = registerData
 
+const BattleStatsSchema = new mongoose.Schema({
+    userid: {
+		type: String,
+		unique: true,
+	},
+	Nenaffinity: String,
+	Health: Number,
+	Attack: Number,
+	Defense: Number,
+	Nen: Number,
+	Intelligence: Number
+
+}
+)
+const playerStatusSchema = new mongoose.Schema({
+	userid: {
+		type: String,
+		unique: true,
+	},
+	battleStatus: Boolean
+})
+const playerStatus = mongoose.model('playerStatus', playerStatusSchema)
+
+
+const Battlestats = mongoose.model('playerbattledata', BattleStatsSchema) 
+module.exports.playerStatus = playerStatus
+module.exports.Battlestats = Battlestats
+
+
+
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 i = 0
 client.commands = new Collection();
@@ -40,7 +69,7 @@ const commandFiles = fs.readdirSync(`commands`).filter(filter => filter.endsWith
 for ( const file of commandFiles) {
     const command = require(`./commands/${file}`)
 	
-	let nigg = ['register','stats']
+	let nigg = ['fight','register','stats' ]
 	let pucci = nigg[i]
     client.commands.set(pucci, command)
 	i++
@@ -60,6 +89,7 @@ client.on('interactionCreate', async interaction => {
 		await command.execute(interaction)
 	} catch(e){
 		console.log(e)
+		
 	}
 
 
@@ -71,5 +101,5 @@ client.once('ready', () => {
 });
 
 // Login to Discord with your client's token
-client.login(token);
+client.login(process.env.TOKEN);
 

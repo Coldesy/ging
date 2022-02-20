@@ -5,7 +5,7 @@ const wait = require('util').promisify(setTimeout)
 const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
-const { registerData } = require('../main.js')
+const { registerData,Battlestats } = require('../main.js')
 
 
 
@@ -21,30 +21,16 @@ module.exports = {
 
     async execute(interaction) {
         try {
-            let neuron = await registerData.find({ 'userid': interaction.user.id }, '-_id nik health attack defense nen intelligence', function (err, docs) {
+            let neuron = await Battlestats.find({ 'userid': interaction.user.id },'Nenaffinity Health Attack Defense Nen Intelligence', function (err, docs) {
+
 
                 if (docs[0] === undefined) {
                     return
 
                 }
-                else if (docs[0] !== undefined) {
-                    let doc = docs[0].toObject()
 
-                    let a = doc.nik
-                    let b = doc.health
-                    let c = doc.attack
-                    let d = doc.defense
-                    let e = doc.nen
-                    let f = doc.intelligence
-
-
-                    return [a, b, c, d, e, f]
-                }
-                if (err) {
-                    console.log(err)
-                }
-            }).clone()
-
+                if (true) { return docs }
+            }).clone();
 
 
 
@@ -54,11 +40,12 @@ module.exports = {
             let a = neuron[0]
 
 
-            let c = a['health']
-            let d = a['attack']
-            let e = a['defense']
-            let f = a['nen']
-            let g = a['intelligence']
+            let c = a['Health']
+            let d = a['Attack']
+            let e = a['Defense']
+            let f = a['Nen']
+            let g = a['Intelligence']
+            let h = a['Nenaffinity']
 
 
 
@@ -68,9 +55,10 @@ module.exports = {
 
             const embed2 = new MessageEmbed()
                 .setColor('#b3c29f')
-                .setTitle(`Heya Player,Here your battle stats!`)
+                .setTitle(`Heya ${interaction.user.username},Here your battle stats!`)
                 .addFields(
                     { name: '\u200B', value: '\u200B' },
+                    { name: `Nen Aura Type: ${h}`, value: '\u200B' },
                     { name: `Health: ${c}`, value: '\u200B' },
                     { name: `Attack: ${d}`, value: '\u200B' },
                     { name: `Defense: ${e}`, value: '\u200B' },

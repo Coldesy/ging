@@ -132,13 +132,19 @@ module.exports = {
             const opponentInfo = fightObj.get('player') // This is some serious shit 
             const playerInfo = fightObj.get('opponent')
             var oppoHealth = opponentInfo.Health
+            var oppoHealthS = opponentInfo.Health
             var oppoAtk = opponentInfo.Attack
             var oppoDef = opponentInfo.Defense
+            var oppoDefS = opponentInfo.Defense
             var oppoNen = opponentInfo.Nen
+            var oppoIntell = opponentInfo.Intelligence
             var userHealth = playerInfo.Health
+            var userHealthS = playerInfo.Health
             var userAtk = playerInfo.Attack
             var userDef = playerInfo.Defense
+            var userDefS = playerInfo.Defense
             var userNen = playerInfo.Nen
+            var userIntell = playerInfo.Intelligence
 
 
 
@@ -203,9 +209,35 @@ module.exports = {
                 }
                 if (userHealth <= 0 || oppoHealth <= 0) {
                     if (userHealth <= 0) {
+                        oppoDefS += 1
+                        oppoAtk += 1
+                        oppoNen += 1 
+                        oppoIntell += 1
+                        oppoHealthS += 10
+                        opponentDocs[0].Attack = oppoAtk
+                        opponentDocs[0].Defense = oppoDefS
+                        opponentDocs[0].Nen = oppoNen
+                        opponentDocs[0].Health = oppoHealthS
+                        opponentDocs[0].Intelligence = oppoIntell
+                        await opponentDocs[0].save()
                         await interaction.followUp(`<@${player2.id}> won`)
+
+
+
+
                     }
                     else if (oppoHealth <= 0) {
+                        userDefS += 1
+                        userAtk += 1
+                        userNen += 1 
+                        userIntell += 1
+                        userHealthS += 10
+                        playerDocs[0].Attack = userAtk
+                        playerDocs[0].Defense = userDefS
+                        playerDocs[0].Nen = userNen
+                        playerDocs[0].Health = userHealthS
+                        playerDocs[0].Intelligence = userIntell
+                        await playerDocs[0].save()
                         await interaction.followUp(`<@${interaction.user.id}> won`)
                     }
                     usobj.battleStatus = false

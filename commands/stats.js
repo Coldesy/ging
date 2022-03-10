@@ -71,7 +71,7 @@ module.exports = {
         }
         catch (err) {
             if (err) {
-                await interaction.reply('Please register yourself!')
+                interaction.reply('register first')
                 console.log(err)
             }
 

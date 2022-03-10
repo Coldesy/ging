@@ -4,34 +4,18 @@ const wait = require('util').promisify(setTimeout)
 const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
-const { Battlestats, playerStatus } = require('../main.js')
+const { Battlestats, playerStatus, abilitiesOfUsers, abilityCollection } = require('../main.js')
 const Canvas = require('canvas')
 
+var abilitymenusmaker = () => {
+    return new MessageActionRow()
+        .addComponents(
+            new MessageSelectMenu()
+                .setCustomId(`${Math.random()}`)
+                .setPlaceholder('Select your ability!')
 
-const row1 = new MessageActionRow()
-    .addComponents(
-        new MessageSelectMenu()
-            .setCustomId('select')
-            .setPlaceholder('Select your action')
-            .addOptions([
-                {
-                    label: 'Attack',
-                    description: 'Attack with punch or kick!',
-                    value: 'Attack',
-                },
-                {
-                    label: 'Defense',
-                    description: 'Defend yourself!',
-                    value: 'Defense',
-                },
-                {
-                    label: 'End',
-                    description: 'End the battle',
-                    value: 'End',
-                }
-            ])
-
-    )
+        )
+}
 
 var menusmaker = () => {
     return new MessageActionRow()
@@ -49,6 +33,16 @@ var menusmaker = () => {
                         label: 'Defense',
                         description: 'Defend yourself!',
                         value: 'Defense',
+                    },
+                    {
+                        label: 'Ability',
+                        description: 'Choose an ability of yours!',
+                        value: 'Ability',
+                    },
+                    {
+                        label: 'Rest',
+                        description: 'Rest to restore nen',
+                        value: 'Rest',
                     },
                     {
                         label: 'End',
@@ -69,18 +63,10 @@ module.exports = {
 
     async execute(interaction) {
         try {
-            const player2 = interaction.options.getUser('opponent')
-            const oppobstatus = await playerStatus.find({ 'userid': player2.id }, 'userid battleStatus', function (err, docs) {
+            const opponent = interaction.options.getUser('opponent')
+            const player = interaction.user
 
-
-                if (docs[0] === undefined) {
-                    return
-
-                }
-                if (true) { return docs }
-
-            }).clone();
-            const userbstatus = await playerStatus.find({ 'userid': interaction.user.id }, 'userid battleStatus', function (err, docs) {
+            const playerBattleStatus = await playerStatus.find({ 'userid': player.id }, 'userid battleStatus cleared', function (err, docs) {
 
 
                 if (docs[0] === undefined) {
@@ -90,78 +76,83 @@ module.exports = {
 
                 if (true) { return docs }
             }).clone();
-            const usobj = userbstatus[0]
-            const osobj = oppobstatus[0]
-            const bcheckU = usobj.battleStatus
-            const ocheckU = osobj.battleStatus
-            if (bcheckU === true || ocheckU === true) {
+            const opponentBattleStatus = await playerStatus.find({ 'userid': opponent.id }, 'userid battleStatus cleared', function (err, docs) {
 
-                interaction.reply('you or opponent is already in a battle')
-                return false
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const playerBattleStats = await Battlestats.find({ 'userid': player.id }, 'Health Attack Defense Nen Intelligence', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const opponentBattleStats = await Battlestats.find({ 'userid': opponent.id }, 'Health Attack Defense Nen Intelligence', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const abilitydocsOfopponent = await abilitiesOfUsers.find({ 'userid': opponent.id }, 'userid abilities', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const abilitydocsOfplayer = await abilitiesOfUsers.find({ 'userid': player.id }, 'userid abilities', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+
+            function statusChange(obj, status) {
+                obj.battleStatus = status
+                obj.save()
             }
-            usobj.battleStatus = true
-            osobj.battleStatus = true
-            await userbstatus[0].save()
-            await oppobstatus[0].save()
-            const opponentDocs = await Battlestats.find({ 'userid': player2.id }, 'Health Defense Attack Nen Intelligence', function (err, docs) {
-
-
-                if (docs[0] === undefined) {
-                    return
-
-                }
-                if (true) { return docs }
-
-            }).clone();
-            const playerDocs = await Battlestats.find({ 'userid': interaction.user.id }, 'Health Defense Attack Nen Intelligence', function (err, docs) {
-
-
-                if (docs[0] === undefined) {
-                    return
-
-                }
-                if (true) { return docs }
-
-            }).clone();
-            const playerObj = opponentDocs[0];
-            const opponentObj = playerDocs[0];
-            const fightObj = new Collection()
-            nameArr = ['player', 'opponent']
-            fightObj.set(nameArr[0], playerObj)
-            fightObj.set(nameArr[1], opponentObj)
-            const opponentInfo = fightObj.get('player') // This is some serious shit 
-            const playerInfo = fightObj.get('opponent')
-            var oppoHealth = opponentInfo.Health
-            var oppoHealthS = opponentInfo.Health
-            var oppoAtk = opponentInfo.Attack
-            var oppoDef = opponentInfo.Defense
-            var oppoDefS = opponentInfo.Defense
-            var oppoNen = opponentInfo.Nen
-            var oppoIntell = opponentInfo.Intelligence
-            var userHealth = playerInfo.Health
-            var userHealthS = playerInfo.Health
-            var userAtk = playerInfo.Attack
-            var userDef = playerInfo.Defense
-            var userDefS = playerInfo.Defense
-            var userNen = playerInfo.Nen
-            var userIntell = playerInfo.Intelligence
-
-
-
+            statusChange(playerBattleStatus[0], true)
+            statusChange(opponentBattleStatus[0], true)
 
 
             const filter = i => {
                 i.deferUpdate()
-                return i.user.id === player2.id || i.user.id === interaction.user.id
+                return i.user.id === opponent.id || i.user.id === player.id
             }
 
+            let playerHealth = playerBattleStats[0]['Health']
+            let playerDefense = playerBattleStats[0]['Defense']
+            let playerAttack = playerBattleStats[0]['Attack']
+            let playerNen = playerBattleStats[0]['Nen']
+            let playerNenIni = playerBattleStats[0]['Nen']
+            let playerIntelligence = playerBattleStats[0]['Intelligence']
 
-
-
-
-
-
-
+            let oppoHealth = opponentBattleStats[0]['Health']
+            let oppoDefense = opponentBattleStats[0]['Defense']
+            let oppoAttack = opponentBattleStats[0]['Attack']
+            let oppoNen = opponentBattleStats[0]['Nen']
+            let oppoNenIni = opponentBattleStats[0]['Nen']
+            let oppoIntelligence = opponentBattleStats[0]['Intelligence']
 
 
 
@@ -179,140 +170,219 @@ module.exports = {
             ctx.drawImage(img2, 0, 0, canvas.width, canvas.height)
             ctx.fillRect(0, 0, 1 / 2 * canvas.width, 100)
             const test1 = new MessageAttachment(canvas.toBuffer(), 'bcgrd.png')
-            let int = await interaction.reply({ content: 'FIGHT!', components: [row1], files: [test1], fetchReply: true })
+            let mainMsg = await interaction.reply({ content: `Duel to the death has begun!\n${player.username}'s turn`, components: [menusmaker()], files: [test1], fetchReply: true })
 
 
 
 
 
+            let botData = 2
+            const inBs = {
+                oppo: false,
+                player: true
+            }
+            function turnChanger(status, players) {
+                inBs[players] = status
+
+            }
+            const collectorOfMainMsg = await mainMsg.createMessageComponentCollector({ filter, componentType: 'SELECT_MENU', time: 600000 })
+
+            collectorOfMainMsg.on('collect', async (i) => {
+                let critsArr = [1, 1, 1, 2, 1.2, 1.3, 1.2, 1.3, 0]
+                let crits = critsArr[Math.floor(Math.random() * critsArr.length)]
+                playerNen += 2
+                oppoNen += 2
+
+                const abilitymenuOfP = abilitymenusmaker()
+                const abilitymenuOfO = abilitymenusmaker()
+                const oppoMenu = menusmaker()
+                const playerMenu = menusmaker()
+
+                if (abilitydocsOfplayer[0].abilities.first !== null) {
+                    abilitymenuOfP.components[0].addOptions([{
+                        label: abilitydocsOfplayer[0].abilities.first,
+                        description: 'first ability',
+                        value: abilitydocsOfplayer[0].abilities.first,
+                    }])
+                }
+                if (abilitydocsOfplayer[0].abilities.second !== null) {
+                    abilitymenuOfP.components[0].addOptions([{
+                        label: abilitydocsOfplayer[0].abilities.second,
+                        description: 'second ability',
+                        value: abilitydocsOfplayer[0].abilities.second,
+                    }])
+                }
+                if (abilitydocsOfplayer[0].abilities.third !== null) {
+                    abilitymenuOfP.components[0].addOptions([{
+                        label: abilitydocsOfplayer[0].abilities.third,
+                        description: 'third ability',
+                        value: abilitydocsOfplayer[0].abilities.third,
+                    }])
+                }
+
+                if (abilitydocsOfopponent[0].abilities.first !== null) {
+                    abilitymenuOfO.components[0].addOptions([{
+                        label: abilitydocsOfopponent[0].abilities.first,
+                        description: 'first ability',
+                        value: abilitydocsOfopponent[0].abilities.first,
+                    }])
+                }
+                if (abilitydocsOfopponent[0].abilities.second !== null) {
+                    abilitymenuOfO.components[0].addOptions([{
+                        label: abilitydocsOfopponent[0].abilities.second,
+                        description: 'second ability',
+                        value: abilitydocsOfopponent[0].abilities.second,
+                    }])
+                }
+                if (abilitydocsOfopponent[0].abilities.third !== null) {
+                    abilitymenuOfO.components[0].addOptions([{
+                        label: abilitydocsOfopponent[0].abilities.third,
+                        description: 'third ability',
+                        value: abilitydocsOfopponent[0].abilities.third,
+                    }])
+                }
 
 
-            const collector1 = await int.createMessageComponentCollector({ filter, componentType: 'SELECT_MENU', time: 600000 })
-            const identt = new Map()
-            identt.set('n', 'no')
-            collector1.on('collect', async i => {
-        
 
-                critsArr = [0.8, 0.9, 1.0, 1.2, 1.5, 0, 2]
-                crits = critsArr[Math.floor(Math.random() * critsArr.length)]
+                // everything set
+
+                playerNen += 2
+                oppoNen += 2
+                if (i.user.id === opponent.id && inBs.oppo === true) {
+                    if (i.values.some(v => v === 'Attack')) {
+                        playerBattleStats[0].Health -= crits * Math.floor(opponentBattleStats[0].Attack / playerBattleStats[0].Defense)
+                        if (crits !== 2 && crits !== 0) { await interaction.editReply({ content: `${opponent.username} attacked!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] }) }
+                        if (crits === 2) { await interaction.editReply({ content: `${opponent.username} attacked with a critical damage!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] }) }
+                        if (crits === 0) { await interaction.editReply({ content: `${opponent.username} attacked but opponent dodged!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] }) }
+                    }
+                    if (i.values.some(v => v === 'Defense')) {
+                        opponentBattleStats[0].Defense += 10
+                        await interaction.editReply({ content: `${opponent.username} defended!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] })
+                    }
+                    if (i.values.some(v => v === 'Ability')) {
+
+                        await interaction.editReply({ content: `${opponent.username} \nChoose your ability!`, components: [abilitymenuOfO] })
+                    }
+                    if (abilitydocsOfopponent[0].abilities.first === null) { await interaction.editReply({ content: 'You currently have no abilities', components: [playerMenu] }) }
+                    if (i.values.some(v => v === abilitydocsOfopponent[0].abilities.first) || i.values.some(v => v === abilitydocsOfopponent[0].abilities.second) || i.values.some(v => v === abilitydocsOfopponent[0].abilities.third)) {
+                        let userability = abilityCollection.get(i.values[0])[i.values[0]]
+                        if (userability.NenCost <= oppoNen) {
+                            oppoNen -= userability.NenCost
+                            userability.execute(interaction, botData, playerBattleStats[0], opponentBattleStats[0], playerMenu, oppoHealth, oppoAttack, oppoDefense, oppoNen, oppoIntelligence)
+                            inBs.oppo = false
+                            inBs.player = true
+
+                        }
+                        if (userability.NenCost > oppoNen) {
+                            await interaction.editReply({ content: 'insufficient nen!', components: [playerMenu] })
+                        }
+                    }
+                    if (i.values.some(v => v === 'Rest')) {
+                        oppoNen += 10
+                        await interaction.editReply({ content: `${opponent.username} Rested!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] })
+                    }
+                    if (i.values.some(v => v === 'End')) {
+
+                        await interaction.editReply({ content: `You ran away...\ncoward ass nigga` })
+                        statusChange(playerBattleStatus[0], false)
+                        statusChange(opponentBattleStatus[0], false)
+                        return false
+                    }
+
+                    if (i.values.some(v => v !== 'Ability')) {
+                        inBs.oppo = false
+                        inBs.player = true
+                    }
+                    collectorOfMainMsg
+
+                }
+                if (playerBattleStats[0].Health <= 0 || opponentBattleStats[0].Health <= 0) {
 
 
-                if (i.values.some(val => val === 'End')){
-                    await interaction.editReply('Battle ended')
-                     usobj.battleStatus = false
-                    osobj.battleStatus = false
-                    await userbstatus[0].save()
-                    await oppobstatus[0].save()
-                    collector1.stop()
+              
+
+
+
+                    if (opponentBattleStats[0].Health <= 0) {
+                        await interaction.editReply(`${player.username} won!!`)
+                        playerBattleStats[0]['Health'] = 1 + playerHealth
+                        playerBattleStats[0]['Attack'] = 1 + playerAttack
+                        playerBattleStats[0]['Defense'] = 1 + playerDefense
+                        playerBattleStats[0]['Nen'] = 1 + playerNenIni
+                        playerBattleStats[0]['Intelligence'] = 1 + playerIntelligence
+                        await playerBattleStats[0].save()
+                    }
+                    if (playerBattleStats[0].Health <= 0) {
+                        await interaction.editReply(`${opponent.username} won!!`)
+                        opponentBattleStats[0]['Health'] = 1 + oppoHealth
+                        opponentBattleStats[0]['Attack'] = 1 + oppoAttack
+                        opponentBattleStats[0]['Defense'] = 1 + oppoDefense
+                        opponentBattleStats[0]['Nen'] = 1 + oppoNenIni
+                        opponentBattleStats[0]['Intelligence'] = 1 + oppoIntelligence
+                        await opponentBattleStats[0].save()
+                    }
+                    playerBattleStatus[0].battleStatus = false
+                    opponentBattleStatus[0].battleStatus = false
+                    await playerBattleStatus[0].save()
+                    await opponentBattleStatus[0].save()
+                    collectorOfMainMsg.stop()
                     return false
-                    
-                }
-                if (userHealth <= 0 || oppoHealth <= 0) {
-                    if (userHealth <= 0) {
-                        oppoDefS += 1
-                        oppoAtk += 1
-                        oppoNen += 1 
-                        oppoIntell += 1
-                        oppoHealthS += 10
-                        opponentDocs[0].Attack = oppoAtk
-                        opponentDocs[0].Defense = oppoDefS
-                        opponentDocs[0].Nen = oppoNen
-                        opponentDocs[0].Health = oppoHealthS
-                        opponentDocs[0].Intelligence = oppoIntell
-                        await opponentDocs[0].save()
-                        await interaction.followUp(`<@${player2.id}> won`)
-
-
-
-
-                    }
-                    else if (oppoHealth <= 0) {
-                        userDefS += 1
-                        userAtk += 1
-                        userNen += 1 
-                        userIntell += 1
-                        userHealthS += 10
-                        playerDocs[0].Attack = userAtk
-                        playerDocs[0].Defense = userDefS
-                        playerDocs[0].Nen = userNen
-                        playerDocs[0].Health = userHealthS
-                        playerDocs[0].Intelligence = userIntell
-                        await playerDocs[0].save()
-                        await interaction.followUp(`<@${interaction.user.id}> won`)
-                    }
-                    usobj.battleStatus = false
-                    osobj.battleStatus = false
-                    await userbstatus[0].save()
-                    await oppobstatus[0].save()
-                    collector1.stop()
-                    return false
 
                 }
-                if (i.user.id === interaction.user.id && identt.has('n')) {
-
-                    let one = menusmaker()
-                    let one1 = menusmaker()
-                    let one2 = menusmaker()
-                    if (i.values.some(val => val === 'Attack')) {
-                        oppoHealth -= Math.floor(crits * userAtk + 10 / oppoDef)
-                        if (crits !== 2 && crits !== 0) { await interaction.editReply({ content: `${interaction.user.username} attacked and his health is ${userHealth}\n<@${player2.id}>'s turn`, components: [one] }) }
-                        if (crits === 2) { await interaction.editReply({ content: `${interaction.user.username} attacked..CRITICAL HIT.. and his health is ${userHealth}\n<@${player2.id}>'s turn`, components: [one1] }) }
-                        if (crits === 0) { await interaction.editReply({ content: `${interaction.user.username} attacked but opponent dodged and his health is ${userHealth}\n<@${player2.id}>'s turn`, components: [one2] }) }
-
-
-                        identt.delete('n')
-                        collector1
-
-
+                if (i.user.id === player.id && inBs.player === true) {
+                    if (i.values.some(v => v === 'Attack')) {
+                        opponentBattleStats[0].Health -= crits * Math.floor(playerBattleStats[0].Attack / opponentBattleStats[0].Defense)
+                        if (crits !== 2 && crits !== 0) { await interaction.editReply({ content: `${player.username} attacked!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] }) }
+                        if (crits === 2) { await interaction.editReply({ content: `${player.username} attacked with a critical damage!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] }) }
+                        if (crits === 0) { await interaction.editReply({ content: `${player.username} attacked but opponent dodged!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] }) }
                     }
-                    else if (i.values.some(val => val === 'Defense')) {
-                        userDef += 10
-                        let two = menusmaker()
-                        await interaction.editReply({ content: `${interaction.user.username} defended and his health is ${userHealth}\n<@${player2.id}>'s turn `, components: [two] })
-
-                        identt.delete('n')
-                        collector1
-
+                    if (i.values.some(v => v === 'Defense')) {
+                        opponentBattleStats[0].Defense += 10
+                        await interaction.editReply({ content: `${player.username} defended!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] })
                     }
+                    if (i.values.some(v => v === 'Ability')) {
+
+                        await interaction.editReply({ content: `${player.username} \nChoose your ability!`, components: [abilitymenuOfP] })
+                    }
+                    if (abilitydocsOfplayer[0].abilities.first === null) { await interaction.editReply({ content: 'You currently have no abilities', components: [playerMenu] }) }
+                    if (i.values.some(v => v === abilitydocsOfplayer[0].abilities.first) || i.values.some(v => v === abilitydocsOfplayer[0].abilities.second) || i.values.some(v => v === abilitydocsOfplayer[0].abilities.third)) {
+                        let userability = abilityCollection.get(i.values[0])[i.values[0]]
+                        if (userability.NenCost <= playerNen) {
+                            oppoNen -= userability.NenCost
+                            userability.execute(interaction, botData, opponentBattleStats[0], opponentBattleStats[0], oppoMenu, playerHealth, playerAttack, playerDefense, playerNen, playerIntelligence)
+                            inBs.oppo = true
+                            inBs.player = false
+
+                        }
+                        else if (userability.NenCost > playerNen) {
+                            await interaction.editReply({ content: 'insufficient nen!', components: [oppoMenu] })
+                        }
+                    }
+                    if (i.values.some(v => v === 'Rest')) {
+                        oppoNen += 10
+                        await interaction.editReply({ content: `${player.username} Rested!\n${player.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] })
+                    }
+                    if (i.values.some(v => v === 'End')) {
+
+                        await interaction.editReply({ content: `You ran away...\ncoward ass nigga` })
+                        statusChange(playerBattleStatus[0], false)
+                        statusChange(opponentBattleStatus[0], false)
+                        return false
+                    }
+
+                    if (i.values.some(v => v !== 'Ability')) {
+                        inBs.oppo = true
+                        inBs.player = false
+                    }
+                    collectorOfMainMsg
+
                 }
 
 
-                else if (i.user.id === player2.id && identt.has('n') === false) {
-                    if (i.values.some(val => val === 'Attack')) {
-                        let three = menusmaker()
-                        let three3 = menusmaker()
-                        let three6 = menusmaker()
-                        userHealth -= Math.floor(crits * oppoAtk + 10 / userDef)
-                        if (crits !== 2 && crits !== 0) { await interaction.editReply({ content: `${player2.username} attacked and his health is ${oppoHealth}\n<@${interaction.user.id}>'s turn`, components: [three] }) }
-                        if (crits === 2) { await interaction.editReply({ content: `${player2.username} attacked..CRITICAL HIT.. and his health is ${oppoHealth}\n<@${interaction.user.id}>'s turn`, components: [three6] }) }
-                        if (crits === 0) { await interaction.editReply({ content: `${player2.username} attacked but opponent dodged and his health is ${oppoHealth}\n<@${interaction.user.id}>'s turn`, components: [three3] }) }
-
-
-
-
-                        identt.set('n', 'oi')
-                        collector1
-
-                    }
-                    else if (i.values.some(val => val === 'Defense')) {
-                        oppoDef += 10
-                        let mFour = menusmaker()
-                        await interaction.editReply({ content: `${player2.username} defended and his health is ${oppoHealth}\n<@${interaction.user.id}>'s turn`, components: [mFour] })
-
-                        identt.set('n', 'bruh')
-                        collector1
-
-                    }
-                }
             })
-
-
-
-
         } catch (err) {
-            interaction.reply('You are probably not registered')
+            interaction.reply('There was an error while loading your file!')
             console.log(err)
-
         }
     }
-}
+} 

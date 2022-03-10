@@ -4,7 +4,7 @@ const wait = require('util').promisify(setTimeout)
 const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
-const {registerData,Battlestats,playerStatus} = require('../main.js')
+const {registerData,Battlestats,playerStatus,abilitiesOfUsers} = require('../main.js')
 
 
 
@@ -27,7 +27,7 @@ module.exports = {
 
 
 	try {
-		const primeBattlestatus = new playerStatus({userid:interaction.user.id,battleStatus:false})
+		const primeBattlestatus = new playerStatus({userid:interaction.user.id,battleStatus:false,cleared:0})
 		await primeBattlestatus.save()
 		function statsRoll(){
 			var health = Math.floor(Math.random() * 20)
@@ -66,12 +66,19 @@ module.exports = {
         let w = 5		
         let e = 5
         let r = 5
+		const newabiObj = new abilitiesOfUsers({userid: interaction.user.id,abilities:{
+			first: null,
+			second: null,
+			third: null
+		}}
+		)
+		newabiObj.save()
         let t = 5
        
 		const nick = interaction.options.getString('nickname')
 		var savedata2 = new Battlestats({userid: interaction.user.id,Nenaffinity:Nenaffinity,Health:q,Attack:w,Defense:e,Nen:r,Intelligence:t})
-		var savedata = new registerData({ userid: interaction.user.id, nik: nick,health: health,attack: attack,defense: defense,nen: nen,intelligence: intelligence})
-		await savedata.save()
+		// var savedata = new registerData({ userid: interaction.user.id, nik: nick,health: health,attack: attack,defense: defense,nen: nen,intelligence: intelligence})
+		// await savedata.save()
 		await savedata2.save()
 		await interaction.user.send({ embeds: [Embed1] })} catch(err){ 
 			if (err.code == 11000){

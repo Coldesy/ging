@@ -7,6 +7,17 @@ const { builtinModules } = require('module');
 const { hyperlink } = require('@discordjs/builders');
 require('dotenv').config()
 
+const abilityCollection = new Collection()
+const abilityFiles = fs.readdirSync(`abilities`).filter(filter => filter.endsWith('.js'))
+for (const file of abilityFiles) {
+    const ability = require(`./abilities/${file}`)
+    const abilityName = file.replace(/.js/g, '')
+    abilityCollection.set(abilityName, ability)
+
+
+}
+module.exports.abilityCollection = abilityCollection
+
 main().catch(err => console.log(err));
 
 async function main() {
@@ -51,7 +62,8 @@ const playerStatusSchema = new mongoose.Schema({
 		type: String,
 		unique: true,
 	},
-	battleStatus: Boolean
+	battleStatus: Boolean,
+	cleared: Number
 })
 const playerStatus = mongoose.model('playerStatus', playerStatusSchema)
 
@@ -60,6 +72,42 @@ const Battlestats = mongoose.model('playerbattledata', BattleStatsSchema)
 module.exports.playerStatus = playerStatus
 module.exports.Battlestats = Battlestats
 
+const abilityhandlerschema = new mongoose.Schema({
+    userid: {
+        type: String,
+        unique: true,
+    },
+  
+    abilities: {
+        first: {
+            type: String,
+            
+        },
+        second: {
+            type: String,
+            
+        },
+        third: {
+            type: String,
+            
+        },
+    }
+
+
+
+}
+)
+const monstersSchema = new mongoose.Schema({
+    monstersArr: Array,
+    })
+
+const monstersModel = mongoose.model('monster',monstersSchema)
+const abilitiesOfUsers = mongoose.model('abilityhandler', abilityhandlerschema)
+module.exports.monstersModel = monstersModel
+
+module.exports.abilitiesOfUsers = abilitiesOfUsers
+
+
 
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -67,9 +115,10 @@ i = 0
 client.commands = new Collection();
 const commandFiles = fs.readdirSync(`commands`).filter(filter => filter.endsWith('.js'))
 for ( const file of commandFiles) {
+	
     const command = require(`./commands/${file}`)
 	
-	let nigg = ['fight','register','stats' ]
+	let nigg = ['fight','register','stats','train' ]
 	let pucci = nigg[i]
     client.commands.set(pucci, command)
 	i++
@@ -77,9 +126,8 @@ for ( const file of commandFiles) {
 
 
 client.on('interactionCreate', async interaction => {
-	url = 'https://discord.gg/BRrcUMy45M'
-	link = hyperlink('Join this awesome server!', url)
-	client.user.setPresence({activities: [{name: `${link}`}]})
+	
+	client.user.setPresence({activities: [{name: `Co founder: Sunny \nCo founder: Lakshmish `}]})
 	if (!interaction.isCommand()) return;
 	const command = client.commands.get(interaction.commandName)
 
@@ -97,7 +145,7 @@ client.on('interactionCreate', async interaction => {
  
 // When the client is ready, run this code (only once)
 client.once('ready', () => {
-	console.log('Ready!');
+	console.log('bot is on with 1000 errors');
 });
 
 // Login to Discord with your client's token

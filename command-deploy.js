@@ -13,14 +13,14 @@ for (const file of commandFiles) {
 	commands.push(command.data.toJSON());
 }
 
-const rest = new REST({ version: '9' }).setToken(token);
+const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
 (async () => {
 	try {
 		console.log('Started refreshing application (/) commands.');
 
 		await rest.put(
-			Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+			Routes.applicationCommands(process.env.CLIENT_ID),
 			{ body: commands },
 		);
 

@@ -254,7 +254,7 @@ module.exports = {
                     }
                     if (i.values.some(v => v === abilitiesOfUser.first) || i.values.some(v => v === abilitiesOfUser.second) || i.values.some(v => v === abilitiesOfUser.second)) {
                         const userability = abilityCollection.get(i.values[0])[i.values[0]]
-                        userability.execute(interaction, botData,1, playerDocs[0], infinitemenus, userHealth, userAttack, userDefense, userNen, userIntelligence)
+                        userability.execute(interaction, botData,1, playerDocs[0], infinitemenus,1, userHealth, userAttack, userDefense, userNen, userIntelligence)
 
                     }
 

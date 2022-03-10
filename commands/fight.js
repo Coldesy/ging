@@ -186,12 +186,12 @@ module.exports = {
 
             }
             const collectorOfMainMsg = await mainMsg.createMessageComponentCollector({ filter, componentType: 'SELECT_MENU', time: 600000 })
-
+            let userability
             collectorOfMainMsg.on('collect', async (i) => {
                 let critsArr = [1, 1, 1, 2, 1.2, 1.3, 1.2, 1.3, 0]
                 let crits = critsArr[Math.floor(Math.random() * critsArr.length)]
-                playerNen += 2
-                oppoNen += 2
+              
+                
 
                 const abilitymenuOfP = abilitymenusmaker()
                 const abilitymenuOfO = abilitymenusmaker()
@@ -251,13 +251,13 @@ module.exports = {
                 if (i.user.id === opponent.id && inBs.oppo === true) {
                     if (i.values.some(v => v === 'Attack')) {
                         playerBattleStats[0].Health -= crits * Math.floor(opponentBattleStats[0].Attack / playerBattleStats[0].Defense)
-                        if (crits !== 2 && crits !== 0) { await interaction.editReply({ content: `${opponent.username} attacked!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] }) }
-                        if (crits === 2) { await interaction.editReply({ content: `${opponent.username} attacked with a critical damage!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] }) }
-                        if (crits === 0) { await interaction.editReply({ content: `${opponent.username} attacked but opponent dodged!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] }) }
+                        if (crits !== 2 && crits !== 0) { await interaction.editReply({ content: `${opponent.username} attacked!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}\n${player.username}'s Nen: ${playerNen}\n${opponent.username}'s Nen: ${oppoNen}`, components: [playerMenu] }) }
+                        if (crits === 2) { await interaction.editReply({ content: `${opponent.username} attacked with a critical damage!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}\n${player.username}'s Nen: ${playerNen}\n${opponent.username}'s Nen: ${oppoNen}`, components: [playerMenu] }) }
+                        if (crits === 0) { await interaction.editReply({ content: `${opponent.username} attacked but opponent dodged!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}\n${player.username}'s Nen: ${playerNen}\n${opponent.username}'s Nen: ${oppoNen}`, components: [playerMenu] }) }
                     }
                     if (i.values.some(v => v === 'Defense')) {
                         opponentBattleStats[0].Defense += 10
-                        await interaction.editReply({ content: `${opponent.username} defended!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}`, components: [playerMenu] })
+                        await interaction.editReply({ content: `${opponent.username} defended!\n${opponent.username}'s health:${opponentBattleStats[0].Health}\n${player.username}'s health: ${playerBattleStats[0].Health}\n${player.username}'s Nen: ${playerNen}\n${opponent.username}'s Nen: ${oppoNen}`, components: [playerMenu] })
                     }
                     if (i.values.some(v => v === 'Ability')) {
 
@@ -265,7 +265,7 @@ module.exports = {
                     }
                     if (abilitydocsOfopponent[0].abilities.first === null) { await interaction.editReply({ content: 'You currently have no abilities', components: [playerMenu] }) }
                     if (i.values.some(v => v === abilitydocsOfopponent[0].abilities.first) || i.values.some(v => v === abilitydocsOfopponent[0].abilities.second) || i.values.some(v => v === abilitydocsOfopponent[0].abilities.third)) {
-                        let userability = abilityCollection.get(i.values[0])[i.values[0]]
+                        userability = abilityCollection.get(i.values[0])[i.values[0]]
                         if (userability.NenCost <= oppoNen) {
                             oppoNen -= userability.NenCost
                             userability.execute(interaction, botData, playerBattleStats[0], opponentBattleStats[0], playerMenu, oppoHealth, oppoAttack, oppoDefense, oppoNen, oppoIntelligence)
@@ -299,11 +299,16 @@ module.exports = {
                 if (playerBattleStats[0].Health <= 0 || opponentBattleStats[0].Health <= 0) {
 
 
-              
 
 
 
-                    if (opponentBattleStats[0].Health <= 0) {
+                    
+                    if (playerBattleStats[0].Health <= 0 && opponentBattleStats[0].Health <= 0 && userability.afterDeath === true) {
+                        await interaction.editReply(`You both died lmao`)
+
+                    }
+                    if (opponentBattleStats[0].Health <= 0 && playerBattleStats[0].Health > 0) {
+                      
                         await interaction.editReply(`${player.username} won!!`)
                         playerBattleStats[0]['Health'] = 1 + playerHealth
                         playerBattleStats[0]['Attack'] = 1 + playerAttack
@@ -312,7 +317,7 @@ module.exports = {
                         playerBattleStats[0]['Intelligence'] = 1 + playerIntelligence
                         await playerBattleStats[0].save()
                     }
-                    if (playerBattleStats[0].Health <= 0) {
+                    if (playerBattleStats[0].Health <= 0 && opponentBattleStats[0].Health > 0) {
                         await interaction.editReply(`${opponent.username} won!!`)
                         opponentBattleStats[0]['Health'] = 1 + oppoHealth
                         opponentBattleStats[0]['Attack'] = 1 + oppoAttack
@@ -332,13 +337,13 @@ module.exports = {
                 if (i.user.id === player.id && inBs.player === true) {
                     if (i.values.some(v => v === 'Attack')) {
                         opponentBattleStats[0].Health -= crits * Math.floor(playerBattleStats[0].Attack / opponentBattleStats[0].Defense)
-                        if (crits !== 2 && crits !== 0) { await interaction.editReply({ content: `${player.username} attacked!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] }) }
-                        if (crits === 2) { await interaction.editReply({ content: `${player.username} attacked with a critical damage!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] }) }
-                        if (crits === 0) { await interaction.editReply({ content: `${player.username} attacked but opponent dodged!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] }) }
+                        if (crits !== 2 && crits !== 0) { await interaction.editReply({ content: `${player.username} attacked!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}\n${player.username}'s Nen: ${playerNen}\n${opponent.username}'s Nen: ${oppoNen}`, components: [oppoMenu] }) }
+                        if (crits === 2) { await interaction.editReply({ content: `${player.username} attacked with a critical damage!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}\n${player.username}'s Nen: ${playerNen}\n${opponent.username}'s Nen: ${oppoNen}`, components: [oppoMenu] }) }
+                        if (crits === 0) { await interaction.editReply({ content: `${player.username} attacked but opponent dodged!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}\n${player.username}'s Nen: ${playerNen}\n${opponent.username}'s Nen: ${oppoNen}`, components: [oppoMenu] }) }
                     }
                     if (i.values.some(v => v === 'Defense')) {
                         opponentBattleStats[0].Defense += 10
-                        await interaction.editReply({ content: `${player.username} defended!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}`, components: [oppoMenu] })
+                        await interaction.editReply({ content: `${player.username} defended!\n${player.username}'s health:${playerBattleStats[0].Health}\n${opponent.username}'s health: ${opponentBattleStats[0].Health}\n${player.username}'s Nen: ${playerNen}\n${opponent.username}'s Nen: ${opponentNen}`, components: [oppoMenu] })
                     }
                     if (i.values.some(v => v === 'Ability')) {
 
@@ -346,10 +351,11 @@ module.exports = {
                     }
                     if (abilitydocsOfplayer[0].abilities.first === null) { await interaction.editReply({ content: 'You currently have no abilities', components: [playerMenu] }) }
                     if (i.values.some(v => v === abilitydocsOfplayer[0].abilities.first) || i.values.some(v => v === abilitydocsOfplayer[0].abilities.second) || i.values.some(v => v === abilitydocsOfplayer[0].abilities.third)) {
-                        let userability = abilityCollection.get(i.values[0])[i.values[0]]
+
+                        userability = abilityCollection.get(i.values[0])[i.values[0]]
                         if (userability.NenCost <= playerNen) {
-                            oppoNen -= userability.NenCost
-                            userability.execute(interaction, botData, opponentBattleStats[0], opponentBattleStats[0], oppoMenu, playerHealth, playerAttack, playerDefense, playerNen, playerIntelligence)
+                            playerNen -= userability.NenCost
+                            userability.execute(interaction, botData, playerBattleStats[0], opponentBattleStats[0], oppoMenu, opponent.id, playerHealth, playerAttack, playerDefense, playerNen, playerIntelligence)
                             inBs.oppo = true
                             inBs.player = false
 

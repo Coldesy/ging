@@ -118,7 +118,7 @@ for ( const file of commandFiles) {
 	
     const command = require(`./commands/${file}`)
 	
-	let nigg = ['fight','register','stats','train' ]
+	let nigg = ['fight','hunter_exam','register','stats','train' ]
 	let pucci = nigg[i]
     client.commands.set(pucci, command)
 	i++

@@ -13,6 +13,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.12.0",
     "@discordjs/rest": "^0.3.0",
+    "agenda": "^4.2.1",
     "arrify": "^3.0.0",
     "canvas": "^2.8.0",
     "command": "0.0.5",
@@ -24,9 +25,10 @@
     "express": "^4.17.2",
     "mongoose": "^6.1.8",
     "node": "^17.4.0",
-    "node-pre-gyp": "^0.17.0"
+    "node-pre-gyp": "^0.17.0",
+    "node-schedule": "^2.1.0",
+    "toad-scheduler": "^1.6.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Coldesy/HxHBot.git"

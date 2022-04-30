@@ -5,6 +5,8 @@ const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
 const { builtinModules } = require('module');
 const { hyperlink } = require('@discordjs/builders');
+const dailyreward = require('./utility/events/dailyEvent.js')
+const questReset = require('./utility/events/questReset.js')
 require('dotenv').config()
 
 const abilityCollection = new Collection()
@@ -18,99 +20,34 @@ for (const file of abilityFiles) {
 }
 module.exports.abilityCollection = abilityCollection
 
+const statusCollection = new Collection()
+const statusFiles = fs.readdirSync(`status`).filter(filter => filter.endsWith('.js'))
+for (const file of statusFiles) {
+    const status = require(`./status/${file}`)
+    const statusName = file.replace(/.js/g, '')
+    statusCollection.set(statusName, status)
+
+
+}
+module.exports.statusCollection = statusCollection
+
+
+
+
 main().catch(err => console.log(err));
 
 async function main() {
 	await mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true, useUnifiedTopology: true,autoIndex:true });
 }
-const registerSchema = new mongoose.Schema({
-	userid: {
-		type: String,
-		unique: true,
-	},
-	nik: String,
-	health: Number,
-	attack: Number,
-	defense: Number,
-	nen: Number,
-	intelligence: Number
 
-}
-)
-
-
-
-const registerData = mongoose.model('playerData', registerSchema) 
-module.exports.registerData = registerData
-
-const BattleStatsSchema = new mongoose.Schema({
-    userid: {
-		type: String,
-		unique: true,
-	},
-	Nenaffinity: String,
-	Health: Number,
-	Attack: Number,
-	Defense: Number,
-	Nen: Number,
-	Intelligence: Number
-
-}
-)
-const playerStatusSchema = new mongoose.Schema({
-	userid: {
-		type: String,
-		unique: true,
-	},
-	battleStatus: Boolean,
-	cleared: Number
-})
-const playerStatus = mongoose.model('playerStatus', playerStatusSchema)
-
-
-const Battlestats = mongoose.model('playerbattledata', BattleStatsSchema) 
-module.exports.playerStatus = playerStatus
-module.exports.Battlestats = Battlestats
-
-const abilityhandlerschema = new mongoose.Schema({
-    userid: {
-        type: String,
-        unique: true,
-    },
-  
-    abilities: {
-        first: {
-            type: String,
-            
-        },
-        second: {
-            type: String,
-            
-        },
-        third: {
-            type: String,
-            
-        },
-    }
-
-
-
-}
-)
-const monstersSchema = new mongoose.Schema({
-    monstersArr: Array,
-    })
-
-const monstersModel = mongoose.model('monster',monstersSchema)
-const abilitiesOfUsers = mongoose.model('abilityhandler', abilityhandlerschema)
-module.exports.monstersModel = monstersModel
-
-module.exports.abilitiesOfUsers = abilitiesOfUsers
+// collection and stuff, will organise later
 
 
 
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+
+
+const client = new Client({ intents: [Intents.FLAGS.GUILD_MEMBERS,Intents.FLAGS.GUILDS] });
 i = 0
 client.commands = new Collection();
 const commandFiles = fs.readdirSync(`commands`).filter(filter => filter.endsWith('.js'))
@@ -118,23 +55,24 @@ for ( const file of commandFiles) {
 	
     const command = require(`./commands/${file}`)
 	
-	let nigg = ['fight','hunter_exam','register','stats','train' ]
-	let pucci = nigg[i]
-    client.commands.set(pucci, command)
+	let commandsArr = ['fight','market','quest','register','remove_ability','shop','stats','test','train','use']
+	let cmdName = commandsArr[i]
+    client.commands.set(cmdName, command)
 	i++
 }
 
 
 client.on('interactionCreate', async interaction => {
 	
-	client.user.setPresence({activities: [{name: `Co founder: Sunny \nCo founder: Lakshmish `}]})
+	
+	client.user.setPresence({activities: [{name: `Co founder: Sunny \nCo founder: Lakshmish `}],status: 'offline'})
 	if (!interaction.isCommand()) return;
 	const command = client.commands.get(interaction.commandName)
 
 	if (!command) return
 
 	try{
-		await command.execute(interaction)
+		await command.execute(interaction,client)
 	} catch(e){
 		console.log(e)
 		
@@ -142,10 +80,13 @@ client.on('interactionCreate', async interaction => {
 
 
 });
+// section for events schedules
+dailyreward
+questReset
  
 // When the client is ready, run this code (only once)
 client.once('ready', () => {
-	console.log('bot is on with 1000 errors');
+	console.log('ready');
 });
 
 // Login to Discord with your client's token

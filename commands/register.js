@@ -4,7 +4,7 @@ const wait = require('util').promisify(setTimeout)
 const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
-const {registerData,Battlestats,playerStatus,abilitiesOfUsers} = require('../main.js')
+const {Battlestats,playerStatus,abilitiesOfUsers,InvModel,questModel,battleItems} = require('../schema.js')
 
 
 
@@ -20,70 +20,77 @@ const Embed1 = new MessageEmbed()
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('register')
-		.setDescription('Registers player into the new world!')
-		.addStringOption(o => o.setName('nickname').setDescription('set your game nick').setRequired(true)),
+		.setDescription('Registers player into the new world!'),
+		
 
 	async execute(interaction) {
 
 
 	try {
-		const primeBattlestatus = new playerStatus({userid:interaction.user.id,battleStatus:false,cleared:0})
+		const primeBattlestatus = new playerStatus({userid:interaction.user.id,battleStatus:false})
 		await primeBattlestatus.save()
-		function statsRoll(){
-			var health = Math.floor(Math.random() * 20)
-		    var attack = Math.floor(Math.random() * 20)	
-		    var defense = Math.floor(Math.random() * 20)
-		    var nen = Math.floor(Math.random() * 20)
-		    var intelligence = Math.floor(Math.random() * 20)
-	
-			while(health + attack + defense + nen + intelligence < 70){
-		    health = Math.floor(Math.random() * 20)
-		    attack = Math.floor(Math.random() * 20)	
-		    defense = Math.floor(Math.random() * 20)
-		    nen = Math.floor(Math.random() * 20)
-		    intelligence = Math.floor(Math.random() * 20)
-			
-			if (health + attack + defense + nen + intelligence > 70){
-				return [health,attack,defense,nen,intelligence]
 		
-				
-			}
 		
-			}
-		  
-			}
-		statsRoll()
-        let redu = statsRoll()
-
-		let health = redu[0]
-		let attack = redu[1]
-		let defense = redu[2]
-		let nen = redu[3]
-		let intelligence = redu[4]
 		let affinityarray = ['Emitter','Emitter','Emitter','Emitter','Emitter','Transmutator','Transmutator','Transmutator','Transmutator','Transmutator','Manupulator','Manupulator','Manupulator','Manupulator','Manupulator','Enhancer','Enhancer','Enhancer','Enhancer','Enhancer','Conjurer','Conjurer','Conjurer','Conjurer','Conjurer','Specialist']
 		let Nenaffinity =  affinityarray[Math.floor(Math.random() * affinityarray.length)]
-        let q = 100
-        let w = 5		
-        let e = 5
-        let r = 5
+       
 		const newabiObj = new abilitiesOfUsers({userid: interaction.user.id,abilities:{
-			first: null,
+			first: 'Toxic Prick',
 			second: null,
 			third: null
 		}}
 		)
-		newabiObj.save()
-        let t = 5
+		await newabiObj.save()
+     
        
-		const nick = interaction.options.getString('nickname')
-		var savedata2 = new Battlestats({userid: interaction.user.id,Nenaffinity:Nenaffinity,Health:q,Attack:w,Defense:e,Nen:r,Intelligence:t})
+		
+		var savedata2 = new Battlestats({userid: interaction.user.id,
+			Nenaffinity:Nenaffinity,
+			tier: 6,
+			Exp: 0,
+			Health:100,
+			Attack:5,
+			Defense:5,
+			Nen:5,
+			Intelligence:5})
 		// var savedata = new registerData({ userid: interaction.user.id, nik: nick,health: health,attack: attack,defense: defense,nen: nen,intelligence: intelligence})
 		// await savedata.save()
 		await savedata2.save()
+		let inv = new InvModel({
+			userid: interaction.user.id,
+			balance: 1000,
+			items: [],
+
+		})
+		let quest = new questModel({
+			userid: interaction.user.id,
+			currentQuest: null,
+			InQuest: false,
+		})
+		await quest.save()
+		await inv.save()
+		let itemsB = new battleItems({
+
+			userid: interaction.user.id,
+			items: [
+				{
+					first: null
+				},
+				{
+					second: null
+				},
+				{
+					third: null
+				}
+			]
+
+		})
+		await itemsB.save()
 		await interaction.user.send({ embeds: [Embed1] })} catch(err){ 
 			if (err.code == 11000){
 				await interaction.reply(`It looks like you have already registered\ndon't worry,We will start the game soon...`)
 			}
+			console.log(err)
 			
 		}
 	}

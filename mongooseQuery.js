@@ -1,4 +1,4 @@
-const {monstersModel} = require('./main.js')
+const {monstersModel,itemsModel,InvModel} = require('./schema.js')
 const fs = require('fs');
 const { Client, Collection, Intents,MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
@@ -8,5 +8,18 @@ const { builtinModules } = require('module');
 const { hyperlink } = require('@discordjs/builders');
 const MonstersObjs = require('./monsters.js')
 
-const Monsters = new monstersModel({monstersArr:MonstersObjs})
-Monsters.save()
+
+const wtf = new InvModel({
+    userid: `737628341728968775`,
+    Cost: 100000,
+    balance: 0,
+    items:[],
+    
+    
+
+})
+
+
+
+
+wtf.save()

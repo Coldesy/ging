@@ -5,7 +5,7 @@ const wait = require('util').promisify(setTimeout)
 const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
-const { registerData,Battlestats } = require('../main.js')
+const { registerData,Battlestats } = require('../schema.js')
 
 
 
@@ -22,11 +22,8 @@ module.exports = {
     async execute(interaction) {
         try {
             let neuron = await Battlestats.find({ 'userid': interaction.user.id },'Nenaffinity Health Attack Defense Nen Intelligence', function (err, docs) {
-
-
                 if (docs[0] === undefined) {
                     return
-
                 }
 
                 if (true) { return docs }
@@ -57,7 +54,7 @@ module.exports = {
                 .setColor('#b3c29f')
                 .setTitle(`Heya ${interaction.user.username},Here your battle stats!`)
                 .addFields(
-                    { name: '\u200B', value: '\u200B' },
+                    { name: '\u200B', value: '<:vegetaleb:934061270645231647>' },
                     { name: `Nen Aura Type: ${h}`, value: '\u200B' },
                     { name: `Health: ${c}`, value: '\u200B' },
                     { name: `Attack: ${d}`, value: '\u200B' },

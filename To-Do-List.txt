@@ -1,0 +1,621 @@
+Ability usage done
+next task is to implement 1 match only stuff and cooldown and de buffs
+Fix turn based abilities
+
+
+
+const { SlashCommandBuilder } = require('@discordjs/builders')
+const { MessageEmbed, MessageActionRow, MessageSelectMenu, MessageAttachment, Collection } = require('discord.js')
+const wait = require('util').promisify(setTimeout)
+const mongoose = require('mongoose');
+const { stringify } = require('querystring');
+const { StringDecoder } = require('string_decoder');
+const { Battlestats, playerStatus, abilitiesOfUsers, abilityCollection } = require('../schema.js')
+const Canvas = require('canvas')
+const { statusCollection } = require('../schema.js')
+const { embedMaker } = require('../utility/embeds/embed.js')
+var abilitymenusmaker = () => {
+    return new MessageActionRow()
+        .addComponents(
+            new MessageSelectMenu()
+                .setCustomId(`${Math.random()}`)
+                .setPlaceholder('Select your ability!')
+
+        )
+}
+
+var menusmaker = () => {
+    return new MessageActionRow()
+        .addComponents(
+            new MessageSelectMenu()
+                .setCustomId(`${Math.random()}`)
+                .setPlaceholder('Select your action')
+                .addOptions([
+                    {
+                        label: 'Attack',
+                        description: 'Attack with punch or kick!',
+                        value: 'Attack',
+                    },
+                    {
+                        label: 'Defense',
+                        description: 'Defend yourself!',
+                        value: 'Defense',
+                    },
+                    {
+                        label: 'Ability',
+                        description: 'Choose an ability of yours!',
+                        value: 'Ability',
+                    },
+                    {
+                        label: 'Rest',
+                        description: 'Rest to restore nen',
+                        value: 'Rest',
+                    },
+                    {
+                        label: 'End',
+                        description: 'End the battle',
+                        value: 'End',
+                    }
+                ])
+
+        )
+}
+
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('fight')
+        .setDescription('Fight')
+        .addUserOption(o => o.setName('opponent').setDescription('Your opponent').setRequired(true)),
+
+    async execute(interaction) {
+        try {
+            
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const player = interaction.user
+
+            const playerBattleStatus = await playerStatus.find({ 'userid': player.id }, 'userid battleStatus cleared', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const opponentBattleStatus = await playerStatus.find({ 'userid': opponent.id }, 'userid battleStatus cleared', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const playerBattleStats = await Battlestats.find({ 'userid': player.id }, 'Health Attack Defense Nen Intelligence', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const opponentBattleStats = await Battlestats.find({ 'userid': opponent.id }, 'Health Attack Defense Nen Intelligence', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const abilitydocsOfopponent = await abilitiesOfUsers.find({ 'userid': opponent.id }, 'userid abilities', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            const abilitydocsOfplayer = await abilitiesOfUsers.find({ 'userid': player.id }, 'userid abilities', function (err, docs) {
+
+
+                if (docs[0] === undefined) {
+                    return
+
+                }
+
+                if (true) { return docs }
+            }).clone();
+            //  if (opponentBattleStatus[0].battleStatus === true || playerBattleStatus[0].battleStatus === true){
+            //      interaction.reply('you or your opponent is already in a battle!')
+            //      return false
+            //  }
+            function statusChange(obj, status) {
+                obj.battleStatus = status
+                obj.save()
+            }
+            statusChange(playerBattleStatus[0], true)
+            statusChange(opponentBattleStatus[0], true)
+
+
+            ,
+
+
+
+            let playerHealth = playerBattleStats[0]['Health']
+            let playerDefense = playerBattleStats[0]['Defense']
+            let playerAttack = playerBattleStats[0]['Attack']
+            let playerNen = playerBattleStats[0]['Nen']
+            let playerNenIni = playerBattleStats[0]['Nen']
+            let playerIntelligence = playerBattleStats[0]['Intelligence']
+
+            let oppoHealth = opponentBattleStats[0]['Health']
+            let oppoDefense = opponentBattleStats[0]['Defense']
+            let oppoAttack = opponentBattleStats[0]['Attack']
+            let oppoNen = opponentBattleStats[0]['Nen']
+            let oppoNenIni = opponentBattleStats[0]['Nen']
+            let oppoIntelligence = opponentBattleStats[0]['Intelligence']
+
+
+
+
+
+
+
+
+
+
+            
+            let img = 'https://images-ext-1.discordapp.net/external/NdAP4MmG4mYDNkepEsD0um4QzIGRsNFi1tWqOe-ktus/https/lh3.googleusercontent.com/8bH2y4BjURTms1KqeywwoeqrfIQ6W-NHjDAJN59QbZXBlbkznkNR88VoJJDGvwoBoJ8hbmqHQVGx9P62hpg1o8AEmd4wMXuSgarz%3Dw1400-k?width=613&height=613'
+            const canvas = Canvas.createCanvas(700, 250)
+            const ctx = canvas.getContext('2d')
+            ctx.fillStyle = 'green'
+            let img2 = await Canvas.loadImage(img)
+            ctx.drawImage(img2, 0, 0, canvas.width, canvas.height)
+            ctx.beginPath()
+            ctx.moveTo(152,113)
+            ctx.lineTo(168,125)
+            // ctx.lineTo(600,124)
+            // ctx.lineTo(584,112)
+            
+           
+            function healthchange(oppoheth,initoh) {
+                 let newX = 600 * 60/100
+                 let newY = 124 
+                 let newx = 584 * 60/100
+                 let newy = 112 
+                 ctx.lineTo(newX,newY)
+                 ctx.lineTo(newx,newy)
+                 ctx.lineTo(152,113)
+                 ctx.closePath()
+            }
+            healthchange()
+            ctx.fill() 
+
+            // ctx.fillRect(150, 111.7, 2/ 2 * canvas.width, 15)
+            const test1 = new MessageAttachment(canvas.toBuffer(), 'health_bar.png')
+            let SupermainEmbed = embedMaker(
+                opponent,
+                player,
+                playerBattleStats[0].Health,
+                playerBattleStats[0].Defense,
+                playerBattleStats[0].Attack,
+                playerBattleStats[0].Intelligence,
+                playerNen,
+                opponentBattleStats[0].Health,
+                opponentBattleStats[0].Defense,
+                opponentBattleStats[0].Attack,
+                opponentBattleStats[0].Intelligence,
+                oppoNen)
+          
+            let mainMsg = await interaction.reply({ embeds: [SupermainEmbed], components: [menusmaker()],files:[test1], fetchReply: true })
+
+
+
+
+
+            let botData = 2
+            const inBs = {
+                oppo: false,
+                player: true
+            }
+            const ratioOfp = playerAttack/oppoDefense * oppoHealth
+            const ratioOfo = oppoAttack/playerDefense * playerHealth
+
+            const collectorOfMainMsg = await mainMsg.createMessageComponentCollector({ filter, componentType: 'SELECT_MENU', time: 600000 })
+            let userability = {}
+            let oppoability = {}
+            let turns = 0
+            collectorOfMainMsg.on('collect', async (i) => {
+                turns += 1
+                let mainEmbed = embedMaker(
+                    opponent,
+                    player,
+                    playerBattleStats[0].Health,
+                    playerBattleStats[0].Defense,
+                    playerBattleStats[0].Attack,
+                    playerBattleStats[0].Intelligence,
+                    playerBattleStats[0].Nen,
+                    opponentBattleStats[0].Health,
+                    opponentBattleStats[0].Defense,
+                    opponentBattleStats[0].Attack,
+                    opponentBattleStats[0].Intelligence,
+                    opponentBattleStats[0].Nen)
+                let critsArr = [1, 1, 1, 2, 1.2, 1.3, 1.2, 1.3, 0]
+                let crits = critsArr[Math.floor(Math.random() * critsArr.length)]
+
+
+
+                const abilitymenuOfP = abilitymenusmaker()
+                const abilitymenuOfO = abilitymenusmaker()
+                const oppoMenu = menusmaker()
+                const playerMenu = menusmaker()
+
+                if (abilitydocsOfplayer[0].abilities.first !== null) {
+                    abilitymenuOfP.components[0].addOptions([{
+                        label: abilitydocsOfplayer[0].abilities.first,
+                        description: 'first ability',
+                        value: abilitydocsOfplayer[0].abilities.first,
+                    }])
+                }
+                if (abilitydocsOfplayer[0].abilities.second !== null) {
+                    abilitymenuOfP.components[0].addOptions([{
+                        label: abilitydocsOfplayer[0].abilities.second,
+                        description: 'second ability',
+                        value: abilitydocsOfplayer[0].abilities.second,
+                    }])
+                }
+                if (abilitydocsOfplayer[0].abilities.third !== null) {
+                    abilitymenuOfP.components[0].addOptions([{
+                        label: abilitydocsOfplayer[0].abilities.third,
+                        description: 'third ability',
+                        value: abilitydocsOfplayer[0].abilities.third,
+                    }])
+                }
+
+                if (abilitydocsOfopponent[0].abilities.first !== null) {
+                    abilitymenuOfO.components[0].addOptions([{
+                        label: abilitydocsOfopponent[0].abilities.first,
+                        description: 'first ability',
+                        value: abilitydocsOfopponent[0].abilities.first,
+                    }])
+                }
+                if (abilitydocsOfopponent[0].abilities.second !== null) {
+                    abilitymenuOfO.components[0].addOptions([{
+                        label: abilitydocsOfopponent[0].abilities.second,
+                        description: 'second ability',
+                        value: abilitydocsOfopponent[0].abilities.second,
+                    }])
+                }
+                if (abilitydocsOfopponent[0].abilities.third !== null) {
+                    abilitymenuOfO.components[0].addOptions([{
+                        label: abilitydocsOfopponent[0].abilities.third,
+                        description: 'third ability',
+                        value: abilitydocsOfopponent[0].abilities.third,
+                    }])
+                }
+
+                
+
+
+
+                // everything set
+
+
+                if (i.user.id === opponent.id && inBs.oppo === true) {
+                    oppoNen += 2
+                    if (i.values.some(v => v === 'Attack')) {
+
+                        playerBattleStats[0].Health -= crits * Math.floor(opponentBattleStats[0].Attack + ratioOfo / playerBattleStats[0].Defense)
+                        if (crits !== 2 && crits !== 0) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${opponent.username} attacked!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [playerMenu] })
+                        }
+                        if (crits === 2) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${opponent.username} attacked  with a devastating blow!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [playerMenu] })
+                        }
+                        if (crits === 0) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${opponent.username} attacked But Opponent dodged!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [playerMenu] })
+                        }
+                        mainEmbed.fields.shift()
+                    }
+                    if (i.values.some(v => v === 'Defense')) {
+                        opponentBattleStats[0].Defense += 10
+                        mainEmbed.fields.unshift({
+                            name: '***__ACTION__*** ',
+                            value: `${opponent.username} defended with all his might!`
+                        })
+                        await interaction.editReply({ embeds: [mainEmbed], components: [playerMenu] })
+                        mainEmbed.fields.shift()
+                    }
+                    if (i.values.some(v => v === 'Ability')) {
+                        if (abilitydocsOfopponent[0].abilities.first === null) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${opponent.username} has no abilities sadly!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [playerMenu] })
+                            mainEmbed.fields.shift()
+                        }
+
+                        else {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${opponent.username} choose your ability!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [abilitymenuOfO] })
+                            mainEmbed.fields.shift()
+                        }
+                    }
+                    if (i.values.some(v => v === abilitydocsOfopponent[0].abilities.first) || i.values.some(v => v === abilitydocsOfopponent[0].abilities.second) || i.values.some(v => v === abilitydocsOfopponent[0].abilities.third)) {
+                        userability = abilityCollection.get(i.values[0])[i.values[0]]
+                        if (userability.NenCost <= oppoNen) {
+                            oppoNen -= userability.NenCost
+                            userability.execute(interaction, botData, opponentBattleStats[0], playerBattleStats[0], playerMenu, opponent.id, oppoHealth, oppoAttack, oppoDefense, oppoNen, oppoIntelligence, embed)
+                            inBs.oppo = false
+                            inBs.player = true
+
+
+                        }
+
+                        if (userability.NenCost > oppoNen) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${opponent.username} it looks like you are exhausted to do that!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [playerMenu] })
+                            mainEmbed.fields.shift()
+                        }
+                    }
+                    if (Object.keys(playerBattleStats[0]).some(v => v === 'status')) {
+                        let statuses = Object.keys(playerBattleStats[0].status)
+                        statuses.forEach(element => {
+                            if (playerBattleStats[0].status[element] === true) {
+                                let statusAbi = statusCollection.get(element)
+
+                                statusAbi[element].execute(interaction, opponentBattleStats[0], playerBattleStats[0], oppoMenu, turns, mainEmbed)
+                            };
+                        })
+                    }
+                    if (i.values.some(v => v === 'Rest')) {
+                        oppoNen += 10
+                        mainEmbed.fields.unshift({
+                            name: '***__ACTION__*** ',
+                            value: `${opponent.username} Rested and restored nen!`
+                        })
+
+                        await interaction.editReply({ embeds: [mainEmbed], components: [playerMenu] })
+                        mainEmbed.fields.shift()
+                    }
+                    if (i.values.some(v => v === 'End')) {
+                        mainEmbed.fields.unshift({
+                            name: '***__ACTION__***',
+                            value: `${opponent.username} Ran away..`
+                        })
+                        await interaction.editReply({ embeds: [mainEmbed] })
+                        mainEmbed.fields.shift()
+                        statusChange(playerBattleStatus[0], false)
+                        statusChange(opponentBattleStatus[0], false)
+                        return false
+                    }
+
+                    if (i.values.some(v => v !== 'Ability')) {
+                        inBs.oppo = false
+                        inBs.player = true
+                    }
+                    collectorOfMainMsg
+
+                }
+                if (playerBattleStats[0].Health <= 0 || opponentBattleStats[0].Health <= 0) {
+
+
+
+
+
+
+                    if (playerBattleStats[0].Health <= 0 && opponentBattleStats[0].Health <= 0) {
+                        if (Object.keys(userability).some(v => v === 'afterDeath')) {
+                            if (userability.afterDeath === true) { await interaction.editReply(`**${opponent.username} killed himself and blew up his opponent**`) }
+                        }
+                        if (Object.keys(oppoability).some(v => v === 'afterDeath')) {
+                            if (oppoability.afterDeath === true) { await interaction.editReply(`**${player.username} killed himself and blew up his opponent**`) }
+                        }
+                    }
+
+                    if (opponentBattleStats[0].Health >= 0 && playerBattleStats[0].Health > 0) {
+
+                        await interaction.editReply(`**${player.username} won!!**`)
+                        playerBattleStats[0]['Health'] = 1 + playerHealth
+                        playerBattleStats[0]['Attack'] = 1 + playerAttack
+                        playerBattleStats[0]['Defense'] = 1 + playerDefense
+                        playerBattleStats[0]['Nen'] = 1 + playerNenIni
+                        playerBattleStats[0]['Intelligence'] = 1 + playerIntelligence
+                        playerBattleStats[0].status = {}
+                        await playerBattleStats[0].save()
+                    }
+                    if (playerBattleStats[0].Health <= 0 && opponentBattleStats[0].Health > 0) {
+                        await interaction.editReply(`**${opponent.username} won!!**`)
+                        opponentBattleStats[0]['Health'] = 1 + oppoHealth
+                        opponentBattleStats[0]['Attack'] = 1 + oppoAttack
+                        opponentBattleStats[0]['Defense'] = 1 + oppoDefense
+                        opponentBattleStats[0]['Nen'] = 1 + oppoNenIni
+                        opponentBattleStats[0]['Intelligence'] = 1 + oppoIntelligence
+                        opponentBattleStats[0].status = {}
+                        await opponentBattleStats[0].save()
+                    }
+                    playerBattleStatus[0].battleStatus = false
+                    opponentBattleStatus[0].battleStatus = false
+                    await playerBattleStatus[0].save()
+                    await opponentBattleStatus[0].save()
+                    collectorOfMainMsg.stop()
+                    return false
+
+                }
+                if (i.user.id === player.id && inBs.player === true) {
+                    playerNen += 2
+                    if (i.values.some(v => v === 'Attack')) {
+                        opponentBattleStats[0].Health -= crits * Math.floor(playerBattleStats[0].Attack + ratioOfp / opponentBattleStats[0].Defense)
+                        if (crits !== 2 && crits !== 0) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__***',
+                                value: `${player.username} Attacked!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [oppoMenu] })
+                        }
+                        if (crits === 2) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__***',
+                                value: `${player.username} attacked with a devastating blow!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [oppoMenu] })
+                        }
+                        if (crits === 0) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${player.username} attacked but opponent dodged!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [oppoMenu] })
+                        }
+                    }
+                    if (i.values.some(v => v === 'Defense')) {
+                        opponentBattleStats[0].Defense += 10
+                        mainEmbed.fields.unshift({
+                            name: '***__ACTION__*** ',
+                            value: `${player.username} Defended with all his might!`
+                        })
+                        await interaction.editReply({ embeds: [mainEmbed], components: [oppoMenu] })
+                    }
+                    if (i.values.some(v => v === 'Ability')) {
+                        if (abilitydocsOfplayer[0].abilities.first === null) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${player.username} You currently have no abilities!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [playerMenu] })
+                            
+                        }
+                        else {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${player.username} Choose your ability!`
+                            })
+
+                            await interaction.editReply({ embeds: [mainEmbed], components: [abilitymenuOfP] })
+                        }
+                        mainEmbed.fields.shift()
+ 
+                    }
+
+                    if (i.values.some(v => v === abilitydocsOfplayer[0].abilities.first) || i.values.some(v => v === abilitydocsOfplayer[0].abilities.second) || i.values.some(v => v === abilitydocsOfplayer[0].abilities.third)) {
+
+                        oppoability = abilityCollection.get(i.values[0])[i.values[0]]
+                        if (oppoability.NenCost <= playerNen) {
+                            playerNen -= oppoability.NenCost
+
+                            oppoability.execute(interaction, botData, playerBattleStats[0], opponentBattleStats[0], oppoMenu, player.id, playerHealth, playerAttack, playerDefense, playerNen, playerIntelligence, mainEmbed)
+                            inBs.oppo = true
+                            inBs.player = false
+
+                        }
+
+
+                        if (oppoability.NenCost > playerNen) {
+                            mainEmbed.fields.unshift({
+                                name: '***__ACTION__*** ',
+                                value: `${player.username} you are too exhausted to do that!`
+                            })
+                            await interaction.editReply({ embeds: [mainEmbed], components: [oppoMenu] })
+                        }
+                    }
+
+                    if (Object.keys(opponentBattleStats[0]).some(v => v === 'status')) {
+                        let statuses = Object.keys(opponentBattleStats[0].status)
+                        statuses.forEach(element => {
+                            
+                            if (opponentBattleStats[0].status[element] === true) {
+                                let statusAbi = statusCollection.get(element)
+
+                                statusAbi[element].execute(interaction, playerBattleStats[0], opponentBattleStats[0], oppoMenu, turns)
+                            };
+                        })
+                    }
+                    if (i.values.some(v => v === 'Rest')) {
+                        oppoNen += 10
+                        mainEmbed.fields.unshift({
+                            name: '***__ACTION__*** ',
+                            value: `${player.username} Rested and restored nen!`
+                        })
+                        await interaction.editReply({ embeds: [mainEmbed], components: [oppoMenu] })
+                    }
+                    if (i.values.some(v => v === 'End')) {
+                        mainEmbed.fields.unshift({
+                            name: '***__ACTION__*** ',
+                            value: `${player.username} Ran away..`
+                        })
+                        await interaction.editReply({ embeds: [mainEmbed] })
+                        statusChange(playerBattleStatus[0], false)
+                        statusChange(opponentBattleStatus[0], false)
+                        return false
+                    }
+
+                    if (i.values.some(v => v !== 'Ability')) {
+                        inBs.oppo = true
+                        inBs.player = false
+                    }
+                    mainEmbed.fields.shift()
+                    collectorOfMainMsg
+
+                }
+
+
+            })
+        } catch (err) {
+            interaction.reply('There was an error while loading your file!')
+            console.log(err)
+        }
+    }
+} 

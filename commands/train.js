@@ -4,12 +4,12 @@ const wait = require('util').promisify(setTimeout)
 const mongoose = require('mongoose');
 const { stringify } = require('querystring');
 const { StringDecoder } = require('string_decoder');
-const { Battlestats, playerStatus, abilitiesOfUsers } = require('../main.js')
+const { Battlestats, playerStatus, abilitiesOfUsers } = require('../schema.js')
 const fs = require('fs')
 const Canvas = require('canvas')
-const monsterObjArr = require('../monsters.js')
-const { abilityCollection, monstersModel } = require('../main.js')
-const Abilityadder = require('../Abilityadder.js')
+
+const { abilityCollection, monstersModel } = require('../schema.js')
+const Abilityadder = require('../utility/database/Abilityadder.js')
 
 
 
@@ -124,7 +124,7 @@ module.exports = {
 
                 if (true) { return docs }
             }).clone();
-            const monsterdocs = await monstersModel.find({ _id: '6220a79182153702cab88d8b' }, 'monstersArr', function (err, docs) {
+            const monsterdocs = await monstersModel.find({ _id: '622e128896c3b6acb2c2017b' }, 'monstersArr', function (err, docs) {
 
 
                 if (docs[0] === undefined) {
